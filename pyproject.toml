@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "textual-test"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Dadamuhames", email = "msd2007msd02@gmail.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = ["textual==0.79.1"]
+
+[project.urls]
+Documentation = "https://github.com/Dadamuhames/textual-test#readme"
+Issues = "https://github.com/Dadamuhames/textual-test/issues"
+Source = "https://github.com/Dadamuhames/textual-test"
+
+[tool.hatch.version]
+path = "src/textual_test/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/textual_test tests}"
+
+[tool.coverage.run]
+source_pkgs = ["textual_test", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/textual_test/__about__.py",
+]
+
+[tool.coverage.paths]
+textual_test = ["src/textual_test", "*/textual-test/src/textual_test"]
+tests = ["tests", "*/textual-test/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+
+[project.scripts]
+termchat = "textual_test.entry_points:main"

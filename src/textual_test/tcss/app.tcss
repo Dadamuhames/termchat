@@ -1,0 +1,24 @@
+Screen {
+    background: $primary 0%;
+    align: center middle;
+}
+
+
+Container {
+    background: $primary 0%;
+}
+
+
+#label {
+    background: rgba(0, 0, 0, 0);         
+    color: white;
+    margin-bottom: 1;
+    margin-left: 1;
+
+}
+
+
+#username_input {
+    max-width: 50;
+}
+

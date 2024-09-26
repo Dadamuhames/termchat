@@ -1,0 +1,50 @@
+MessageBlock {
+    border: ascii white;
+    max-width: 30;
+    max-height: 10;
+    margin-bottom: 2;
+    margin-left: 1;
+}
+
+
+MessageBlock.right {
+    margin-left: 35;
+    margin-bottom: 2;
+}
+
+
+MessageList {
+    max-width: 70;
+    max-height: 30;
+    overflow-y: scroll;
+    border: round white;
+}
+
+Screen {
+    background: $primary 0%; /* semi-transparent black */
+    align: center middle;
+    overflow: hidden;
+    max-width: 100;
+    max-height: 30;
+}
+
+
+Input {
+    max-width: 70;
+    margin-top: 1;
+}
+
+
+Static#chat_label {
+    border: round white;
+    max-width: 70;
+    margin-bottom: -1;
+    content-align: center middle;
+}
+
+
+Static#no_message {
+    content-align: center middle;
+    max-width: 70;
+    height: 25;
+}
