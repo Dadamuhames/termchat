@@ -1,7 +1,7 @@
 from collections.abc import Callable
 import socket
 import json
-
+import select
 
 HOST = "127.0.0.1"
 PORT = 7070
@@ -17,20 +17,39 @@ class SocketClient:
         self.connected = False
 
 
-    def on_message(self, data):
-        message = json.loads(str(data.decode()))
-        
-        print("New message:")
-        print(message)
-
-
     async def recieve_data(self, handler: Callable):
         while True:
-            data = self._connection.recv(2048)
+            read_sockets, _, _ = select.select([self._connection], [], [], 100)
+
+            for sock in read_sockets:
+                data = self.recv_all(sock)
+
+                if data != None and data != "":
+                    handler(json.loads(data))
+
+
+
+    def recv_all(self, sock: socket.socket):
+        result = ""
+
+        while not self.is_json(result):
+            data = sock.recv(256)
 
             if data != None and data.decode() != "":
-                handler(json.loads(data.decode()))
+                result += data.decode()
 
+        return result
+
+        
+
+
+    def is_json(self, json_str):
+        try:
+            json.loads(json_str)
+        except ValueError as e:
+            return False
+
+        return True
 
 
     def connect(self):
@@ -59,5 +78,5 @@ class SocketClient:
 
         message_in_bytes = bytes(json.dumps(message), encoding="utf-8")
 
-        self._connection.send(message_in_bytes)
+        self._connection.sendall(message_in_bytes)
 

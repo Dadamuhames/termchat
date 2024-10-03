@@ -1,4 +1,3 @@
-import logging
 from .connection import get_connection, close_connection
 from .dto import map_to_user, User
 

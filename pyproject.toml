@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "textual-test"
+name = "termchat"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
@@ -27,31 +27,31 @@ classifiers = [
 dependencies = ["textual==0.79.1"]
 
 [project.urls]
-Documentation = "https://github.com/Dadamuhames/textual-test#readme"
-Issues = "https://github.com/Dadamuhames/textual-test/issues"
-Source = "https://github.com/Dadamuhames/textual-test"
+Documentation = "https://github.com/Dadamuhames/termchat#readme"
+Issues = "https://github.com/Dadamuhames/termchat/issues"
+Source = "https://github.com/Dadamuhames/termchat"
 
 [tool.hatch.version]
-path = "src/textual_test/__about__.py"
+path = "src/termchat/__about__.py"
 
 [tool.hatch.envs.types]
 extra-dependencies = [
   "mypy>=1.0.0",
 ]
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/textual_test tests}"
+check = "mypy --install-types --non-interactive {args:src/termchat tests}"
 
 [tool.coverage.run]
-source_pkgs = ["textual_test", "tests"]
+source_pkgs = ["termchat", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/textual_test/__about__.py",
+  "src/termchat/__about__.py",
 ]
 
 [tool.coverage.paths]
-textual_test = ["src/textual_test", "*/textual-test/src/textual_test"]
-tests = ["tests", "*/textual-test/tests"]
+termchat = ["src/termchat", "*/termchat/src/termchat"]
+tests = ["tests", "*/termchat/tests"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -62,4 +62,4 @@ exclude_lines = [
 
 
 [project.scripts]
-termchat = "textual_test.entry_points:main"
+termchat = "termchat.entry_points:main"

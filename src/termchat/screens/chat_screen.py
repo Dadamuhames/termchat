@@ -1,21 +1,23 @@
-import threading
-from textual.app import ComposeResult, messages
+from textual.app import ComposeResult
 from textual import on
 from textual.widgets import Input, Static
 from textual.screen import Screen
 from datetime import datetime
-from textual_test.database.dto import User
-from textual_test.database.user_queries import get_user_data
-from textual_test.socket_client import SocketClient
-from textual_test.widgets.messages import Message, MessageList
+from termchat.api.chats import get_chat_inner, get_chat_messages
+from termchat.database.dto import User
+from termchat.database.user_queries import get_user_data
+from termchat.socket_client import SocketClient
+from termchat.widgets.messages import Message, MessageList
 from textual.message import Message as TextualMessage
 
 
 class ChatScreen(Screen):
-    username: str
+    chat_id: int
+    chat_data: dict
     messages: list[Message]
     socket: SocketClient
-
+    listening: bool
+ 
 
     class NewMessage(TextualMessage):
         def __init__(self, data: dict) -> None:
@@ -24,21 +26,21 @@ class ChatScreen(Screen):
 
     CSS_PATH = "../tcss/messages.tcss"
 
-    def __init__(self, username: str, name: str | None = None, id: str | None = None, classes: str | None = None) -> None:
+
+    def __init__(self, chat_id: int, socket: SocketClient, name: str | None = None, id: str | None = None, classes: str | None = None) -> None:
         super().__init__(name, id, classes)
-        self.username = username
-        self.messages = list()
+        self.chat_id = chat_id
+        self.socket = socket
+        self.listening = False
 
         user: User | None = get_user_data()
 
         assert user != None, "User not found"
+       
+        self.chat_data = get_chat_inner(user.device_token, self.chat_id)
+        self.messages = get_chat_messages(user.device_token, self.chat_id)
 
-        self.socket = SocketClient(user.device_token)
-        self.socket.connect()  
-
-    async def new_message_wrap(self, data):
-        self.app.call_from_thread(self.new_message, data)
-        
+        assert self.chat_data != None, "Chat should not be null"
 
 
     @on(NewMessage)
@@ -48,9 +50,8 @@ class ChatScreen(Screen):
         messages_list = self.query_one(MessageList)
     
         message = message_data.get("message", "")
-        from_user = message_data.get("from_user_id", "")
 
-        messages_list.messages.append(Message(from_user=str(from_user), message=message, date=datetime.now()))
+        messages_list.messages.append(Message(message=message, date=datetime.now()))
 
         await messages_list.recompose()
 
@@ -59,19 +60,12 @@ class ChatScreen(Screen):
         self.query_one(Input).clear()
 
 
-
-    def on_data_recieved(self, data: dict):
-        self.post_message(self.NewMessage(data))
-
-
     def compose(self) -> ComposeResult: 
-        yield Static(f"Chat: {self.username}", id="chat_label")
+        yield Static(f"Chat: {self.chat_data.get('id')}", id="chat_label")
 
         yield MessageList(messages=self.messages)
 
         yield Input(id="message_input")
-
-        self.run_worker(self.socket.recieve_data(self.on_data_recieved), thread=True)
 
 
 
@@ -81,7 +75,7 @@ class ChatScreen(Screen):
 
         if not len(message): return
 
-        self.socket.send_message({"message": message, "toUserId": 57})
+        self.socket.send_message({"message": message, "chatId": self.chat_data.get("id")})
 
         messages_list = self.query_one(MessageList)
 

@@ -1,7 +1,7 @@
 # textual_test
 
-[![PyPI - Version](https://img.shields.io/pypi/v/textual-test.svg)](https://pypi.org/project/textual-test)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/textual-test.svg)](https://pypi.org/project/textual-test)
+[![PyPI - Version](https://img.shields.io/pypi/v/termchat.svg)](https://pypi.org/project/termchat)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/termchat.svg)](https://pypi.org/project/termchat)
 
 -----
 
@@ -13,9 +13,9 @@
 ## Installation
 
 ```console
-pip install textual-test
+pip install termchat
 ```
 
 ## License
 
-`textual-test` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`termchat` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

@@ -17,6 +17,12 @@ Container {
 
 }
 
+Footer {
+    width: 70;
+    margin-left: 71;
+    margin-top: -20;
+    margin-bottom: 5;
+}
 
 #username_input {
     max-width: 50;

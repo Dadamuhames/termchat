@@ -1,0 +1,25 @@
+
+Screen {
+    align: center middle;
+}
+
+
+ListView {
+    width: 70;
+    height: 30;
+    margin: 2 2;
+}
+
+Label {
+    padding: 1 2;
+} 
+
+
+Static#chat_list_label {
+    border: round white;
+    max-width: 70;
+    margin: 2 2;
+    margin-bottom: -1;
+    content-align: center middle;
+}
+
