@@ -3,7 +3,12 @@ from termchat.main import MyApp
 
 
 def main():
-    create_tables()
-    app = MyApp()
+    try:
+        create_tables()
+        app = MyApp()
 
-    app.run()
+        app.run()
+
+    except ConnectionRefusedError:
+        print("API error! Try to update your termchat version")
+
