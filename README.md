@@ -1,4 +1,4 @@
-# textual_test
+# termchat
 
 [![PyPI - Version](https://img.shields.io/pypi/v/termchat.svg)](https://pypi.org/project/termchat)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/termchat.svg)](https://pypi.org/project/termchat)
