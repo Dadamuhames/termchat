@@ -36,22 +36,22 @@ def get(url: str, params: dict = {}, headers: dict = {}) -> dict:
 
 
 
-async def post(url: str, json: dict = {}, headers: dict = {}) -> dict:
+async def post(url: str, json: dict = {}, headers: dict = {}) -> dict | None:
     URL = BASE_URL + url
 
-    response_json = {}
+    response_json = None
 
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(URL, json=json, headers=headers)
-
-            logging.info(response.text)
-
+            
+            response.raise_for_status() 
 
             response_json = response.json()
 
-    except Exception as error:
+    except httpx.HTTPStatusError as error:        
         logging.error(str(error))
+        return None
 
     return response_json
 

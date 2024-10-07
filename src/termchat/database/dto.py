@@ -27,7 +27,7 @@ class UserListItem:
 
 class User:
     id: int
-    uuid: str
+    uuid: int
     username_changed: bool
     username: str
     device_token: str

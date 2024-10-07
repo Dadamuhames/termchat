@@ -4,10 +4,6 @@ Screen {
 }
 
 
-Container {
-    background: $primary 0%;
-}
-
 
 #label {
     background: rgba(0, 0, 0, 0);         
@@ -19,9 +15,7 @@ Container {
 
 Footer {
     width: 70;
-    margin-left: 71;
-    margin-top: -20;
-    margin-bottom: 5;
+    align-horizontal: center;
 }
 
 #username_input {

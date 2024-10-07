@@ -1,0 +1,42 @@
+Label {
+    padding: 1 2;
+} 
+
+
+Screen {
+    background: $primary 0%; /* semi-transparent black */
+    align: center middle;
+    overflow: hidden;
+    max-width: 100;
+    max-height: 30;
+}
+
+
+Input#user_search_input {
+    max-width: 70;
+    margin-top: 2;
+    margin-left: 2;
+}
+
+
+ListView {
+    width: 70;
+    height: 30;
+    margin: 2 2;
+}
+
+
+Static#chat_label {
+    border: round white;
+    max-width: 70;
+    margin-bottom: -1;
+    content-align: center middle;
+}
+
+
+Static#no_message {
+    content-align: center middle;
+    max-width: 70;
+    height: 25;
+} 
+

@@ -3,11 +3,13 @@ from textual.app import ComposeResult, on
 from textual.screen import Screen
 from textual.widget import Widget
 from textual.widgets import Footer, Input, Label, ListItem, ListView
-
 from termchat.api.chats import create_chat
 from termchat.api.users import get_users, get_users_async
 from termchat.database.dto import User, UserListItem
 from termchat.database.user_queries import get_user_data
+from termchat.end_to_end.store_keys import generate_and_send_my_key
+from termchat.myapp_base import MyAppBase
+from termchat.utils import get_or_generate_chat_keys
 from .chat_screen import ChatScreen
 
 
@@ -28,47 +30,9 @@ class UsersScreen(Screen):
     users_list: list[UserListItem]
     device_token: str
 
-    CSS_PATH = "../tcss/list.tcss"
-
-    CSS = """ 
-    Screen {
-        background: $primary 0%; /* semi-transparent black */
-        align: center middle;
-        overflow: hidden;
-        max-width: 100;
-        max-height: 30;
-    }
+    CSS_PATH = "../tcss/user_list.tcss"
 
 
-    Input#user_search_input {
-        max-width: 70;
-        margin-top: 1;
-        margin-left: 2;
-    }
-
-    
-    ListView {
-        width: 70;
-        height: 30;
-        margin: 2 2;
-    }
-
-
-    Static#chat_label {
-        border: round white;
-        max-width: 70;
-        margin-bottom: -1;
-        content-align: center middle;
-    }
-
-
-    Static#no_message {
-        content-align: center middle;
-        max-width: 70;
-        height: 25;
-    } """
-
-    
     def compose(self) -> ComposeResult:
         user: User | None = get_user_data()
 
@@ -95,7 +59,7 @@ class UsersScreen(Screen):
                 list_items.append(CustomListItem(label, user_id=user_data.id, chat_id=user_data.chat_id))     
 
             yield ListView(*list_items)
-            yield Footer()
+            yield Footer(show_command_palette=False)
    
 
     async def change_users_list(self, search: str):
@@ -112,8 +76,6 @@ class UsersScreen(Screen):
             list_view.append(CustomListItem(label, user_id=user_data.id, chat_id=user_data.chat_id))
 
 
-
-
     @on(Input.Changed, selector="#user_search_input")
     async def search_users(self, event: Input.Changed):
         search = event.input.value
@@ -121,19 +83,37 @@ class UsersScreen(Screen):
         self.app.run_worker(self.change_users_list(search), exclusive=True)
 
 
-
     @on(ListView.Selected)
     async def select_user(self, event: ListView.Selected):
-        selected = event.item
+        assert isinstance(event.item, CustomListItem)
+        assert isinstance(self.app, MyAppBase)
+        assert self.app.socket_client != None
+        assert self.app.chat_list_screen != None
+
+        selected: CustomListItem = event.item
+
+        chat_screen = None
 
         if selected.chat_id != None:
-            self.app.push_screen(ChatScreen(selected.chat_id, self.app.socket_client))
+            chat_keys = await get_or_generate_chat_keys(self.device_token, selected.chat_id, self.app.socket_client)
+
+            chat_screen = ChatScreen(selected.chat_id, self.app.socket_client, chat_keys)
 
         else:
             chat_created = await create_chat(self.device_token, selected.user_id)
 
-            self.app.push_screen(ChatScreen(chat_created.get("id"), self.app.socket_client))
-            
+            if not chat_created:
+                self.notify("Chat cannot be created! Try again later!", severity="error", timeout=5)
+                return
+
+            chat_id = chat_created.get("id", 0)
+
+            chat_keys = await generate_and_send_my_key(self.device_token, chat_id, self.app.socket_client)
+
+            chat_screen = ChatScreen(chat_id, self.app.socket_client, chat_keys)
 
 
-        print(selected.user_id, selected.chat_id)
+        self.app.chat_list_screen.chat_screen = chat_screen             
+
+        self.app.push_screen(chat_screen)
+

@@ -24,7 +24,8 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = ["textual==0.79.1", "httpx==0.24.1"]
+
+dependencies = ["textual==0.79.1", "httpx==0.24.1", "cryptography==43.0.0"]
 
 [project.urls]
 Documentation = "https://github.com/Dadamuhames/termchat#readme"

@@ -17,15 +17,24 @@ class SocketClient:
         self.connected = False
 
 
-    async def recieve_data(self, handler: Callable):
+    async def recieve_data(self, message_handler: Callable, chat_confirm_handler: Callable):
         while True:
             read_sockets, _, _ = select.select([self._connection], [], [], 100)
 
             for sock in read_sockets:
                 data = self.recv_all(sock)
 
-                if data != None and data != "":
-                    handler(json.loads(data))
+                if data == None or data == "": continue
+
+                data_as_json = json.loads(data)
+
+                data_type = data_as_json.get("type")
+
+                if data_type == "MESSAGE":
+                    message_handler(data_as_json)
+
+                elif data_type == "CONFIRM_CHAT":
+                    chat_confirm_handler(data_as_json)
 
 
 
@@ -46,7 +55,7 @@ class SocketClient:
     def is_json(self, json_str):
         try:
             json.loads(json_str)
-        except ValueError as e:
+        except ValueError:
             return False
 
         return True
