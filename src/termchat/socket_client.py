@@ -3,7 +3,7 @@ import socket
 import json
 import select
 
-HOST = "127.0.0.1"
+HOST = "localhost"
 PORT = 7070
 
 
@@ -82,10 +82,17 @@ class SocketClient:
         self._connection.close()
 
 
+
     def send_message(self, message: dict):
         message["deviceToken"] = self.device_token
-
+    
         message_in_bytes = bytes(json.dumps(message), encoding="utf-8")
 
         self._connection.sendall(message_in_bytes)
+
+
+    def send_chat_message(self, message: dict):
+        message["type"] = "MESSAGE"
+
+        self.send_message(message)
 

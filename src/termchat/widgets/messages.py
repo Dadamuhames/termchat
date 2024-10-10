@@ -53,7 +53,7 @@ class MessageList(Widget):
 
     def compose(self) -> ComposeResult:
         if not self.messages or not len(self.messages):
-            yield Static("There is not message yet", id="no_message")
+            yield Static("There is no message yet", id="no_message")
             return
 
         for message in self.messages:

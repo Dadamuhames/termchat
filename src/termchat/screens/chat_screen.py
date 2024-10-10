@@ -71,7 +71,7 @@ class ChatScreen(Screen):
     async def chat_comfirmed(self, message: ChatComfirmed):
         data = message.data
 
-        self.chat_data["companionPublicKey"] = data.get("publicKey", "")
+        self.chat_data["publicKey"] = data.get("publicKey", "")
 
         self.notify("Companion comfirmed your chat!", severity="information", timeout=5)
 
@@ -127,7 +127,7 @@ class ChatScreen(Screen):
                                                         self.chat_data.get("companionId", 0))
 
 
-        self.socket.send_message({"message": encrypted_message, "chatId": self.chat_id})
+        self.socket.send_chat_message({"message": encrypted_message, "chatId": self.chat_id})
 
         messages_list = self.query_one(MessageList)
 

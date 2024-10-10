@@ -65,7 +65,7 @@ class ChatsListScreen(Screen):
         if self.chat_screen:
             self.chat_screen.post_message(ChatScreen.NewMessage(data))
 
-        self.app.post_message(self.NewMessageInChatList(data)) 
+        self.post_message(self.NewMessageInChatList(data)) 
 
 
     def start_worker(self):
@@ -96,25 +96,20 @@ class ChatsListScreen(Screen):
     async def on_new_message(self, message: NewMessageInChatList):
         message_data = message.data
 
+        chats = self.chats_list
+
         chat_data = message_data.get("chat", {})
 
         chat_id = int(chat_data.get("id", 0))
 
-        chatItem = self.query_one(f"#chat_{chat_id}")
-
-        chatItem.remove()
-
-
-        chat_id_as_int = int(str(chat_id).replace("chat_", ""))
-
-        self.chats_list.insert(0, ChatItem(chat_id_as_int, chat_data.get("name")))
-
-
-        chat = [i for i in range(len(self.chats_list)) if self.chats_list[i].id == chat_id]
+        chat = [c for c in chats if c.id == chat_id]
 
         if len(chat):
-            del self.chats_list[chat[0]]
+            chats.remove(chat[0])
 
+        chats.insert(0, ChatItem(chat_id, chat_data.get("name")))
+
+        self.chats_list = chats
 
         await self.recompose()
 
