@@ -21,12 +21,11 @@ class ChatsListScreen(Screen):
     worker: Worker | None
 
     CSS_PATH = "../tcss/list.tcss"
-    
+
     class NewMessageInChatList(Message):
         def __init__(self, data: dict) -> None:
             self.data = data
             super().__init__()
-
 
     def __init__(self, device_token: str, socket: SocketClient, name: str | None = None, id: str | None = None, classes: str | None = None) -> None:
         super().__init__(name, id, classes)
@@ -37,8 +36,6 @@ class ChatsListScreen(Screen):
         self.list_view = None
         self.worker = None
 
-
-    
     def compose(self) -> ComposeResult:
         yield Static("Your chats", id="chat_list_label")
 
@@ -48,36 +45,29 @@ class ChatsListScreen(Screen):
             chat_id = f"chat_{chat.id}"
             list_items.append(ListItem(Label(f"@{chat.name}"), id=chat_id))
 
-
         self.list_view = ListView(*list_items)
 
         yield self.list_view
         yield Footer(show_command_palette=False)
 
-
-
     def on_chat_confirmation(self, data: dict):
         if self.chat_screen:
             self.chat_screen.post_message(ChatScreen.ChatComfirmed(data))
-
 
     def on_data_recieved(self, data: dict):
         if self.chat_screen:
             self.chat_screen.post_message(ChatScreen.NewMessage(data))
 
-        self.post_message(self.NewMessageInChatList(data)) 
-
+        self.post_message(self.NewMessageInChatList(data))
 
     def start_worker(self):
-        self.worker = self.run_worker(self.socket.recieve_data(self.on_data_recieved, self.on_chat_confirmation), thread=True)
-
+        self.worker = self.run_worker(self.socket.recieve_data(
+            self.on_data_recieved, self.on_chat_confirmation), thread=True)
 
     def stop_worker(self):
         if self.worker:
             self.worker.cancel()
             self.worker = None
-
-
 
     @on(ListView.Selected)
     async def chat_selected(self, selected: ListView.Selected):
@@ -89,8 +79,6 @@ class ChatsListScreen(Screen):
         self.chat_screen = ChatScreen(chat_id, self.socket, chat_keys)
 
         self.app.push_screen(self.chat_screen)
-
-
 
     @on(NewMessageInChatList)
     async def on_new_message(self, message: NewMessageInChatList):
@@ -112,4 +100,3 @@ class ChatsListScreen(Screen):
         self.chats_list = chats
 
         await self.recompose()
-
